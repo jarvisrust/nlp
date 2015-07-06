@@ -60,7 +60,7 @@ fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
                         (c > 90  && c < 97) ||
                         (c > 122 && c < 127) {
 
-                        out.append(&mut take_symbol(x.to_string(), &mut current));
+                        out.extend(&mut take_symbol(x.to_string(), &mut current).into_iter());
                     } else {
                         current.push(x);
                     }

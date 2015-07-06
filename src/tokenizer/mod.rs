@@ -9,6 +9,7 @@ pub fn tokenize<'a>(input: String) -> TokenList {
 
     out = split_on_spaces(out);
     out = split_on_hyphens(out);
+    out = split_off_punctuation(out);
 
     out
 }
@@ -58,7 +59,7 @@ fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
                         (c > 57  && c < 65) ||
                         (c > 90  && c < 97) ||
                         (c > 122 && c < 127) {
-                            
+
                         out.append(&mut take_symbol(x.to_string(), &mut current));
                     } else {
                         current.push(x);

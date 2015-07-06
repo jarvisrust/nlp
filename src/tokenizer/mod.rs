@@ -52,7 +52,12 @@ fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
 
         loop {
             match split.next() {
-                None => break,
+                None => {
+                    out.push(current.clone());
+                    current.truncate(0);
+                    
+                    break;
+                },
                 Some(x) => {
                     let c: u8 = x as u8;
                     if  (c > 32  && c < 48) ||

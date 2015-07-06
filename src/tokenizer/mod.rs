@@ -1,8 +1,8 @@
-pub type Token<'a> = &'a str;
-pub type TokenList<'a> = Vec<Token<'a>>;
+pub type Token = String;
+pub type TokenList = Vec<Token>;
 
 
-pub fn tokenize<'a>(input: &'a str) -> TokenList {
+pub fn tokenize<'a>(input: String) -> TokenList {
     let mut out = TokenList::new();
 
     out.push(input);
@@ -19,7 +19,7 @@ fn split_on_spaces<'a>(input: TokenList) -> TokenList {
     for token in input {
         let split = token.split(" ");
         for item in split {
-            out.push(item);
+            out.push(item.to_string());
         }
     }
 
@@ -32,7 +32,7 @@ fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
     for token in input {
         let split = token.split("-");
         for item in split {
-            out.push(item);
+            out.push(item.to_string());
         }
     }
 
@@ -43,46 +43,16 @@ fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
 // `!@#$%^&*()-_+={[}]\|:;'”<,>.?/
 fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
     let mut out = TokenList::new();
+    let mut current = String::new();
 
     for token in input {
 
         let mut split = token.chars();
 
-        let mut current = String::new();
         loop {
             match split.next() {
                 None => break,
-                Some('`') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('!') => { out.push(current.as_str()); out.push(&"!"); current = String::new() },
-                Some('@') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('#') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('$') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('%') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('^') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('&') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('*') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('(') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some(')') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('-') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('_') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('+') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('=') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('{') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('[') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('}') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some(']') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('\\') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('|') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some(':') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some(';') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('\'') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('”') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('<') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some(',') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('>') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('.') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('?') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
-                Some('/') => { out.push(current.as_str()); out.push(&"`"); current = String::new() },
+                Some('`') => out.append(&mut take_symbol("`".to_string(), &mut current)),
                 Some(x) => {
                     current.push(x);
                 },
@@ -90,6 +60,17 @@ fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
         }
 
     }
+
+    out
+}
+
+fn take_symbol<'a>(ch: String, current: &mut String) -> TokenList {
+    let mut out = TokenList::new();
+
+    out.push(current.clone());
+    out.push(ch);
+
+    current.truncate(0); // = String::new();
 
     out
 }

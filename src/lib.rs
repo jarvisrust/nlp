@@ -1,3 +1,5 @@
+#![feature(append)]
+
 mod tagger;
 mod tokenizer;
 

@@ -52,9 +52,17 @@ fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
         loop {
             match split.next() {
                 None => break,
-                Some('`') => out.append(&mut take_symbol("`".to_string(), &mut current)),
                 Some(x) => {
-                    current.push(x);
+                    let c: u8 = x as u8;
+                    if  (c > 32  && c < 48) ||
+                        (c > 57  && c < 65) ||
+                        (c > 90  && c < 97) ||
+                        (c > 122 && c < 127) {
+                            
+                        out.append(&mut take_symbol(x.to_string(), &mut current));
+                    } else {
+                        current.push(x);
+                    }
                 },
             }
         }

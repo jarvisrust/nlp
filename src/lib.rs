@@ -1,7 +1,7 @@
 #![feature(append)]
 
-mod tagger;
-mod tokenizer;
+pub mod tagger;
+pub mod tokenizer;
 
 #[test]
 fn it_works() {

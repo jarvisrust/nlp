@@ -1,3 +1,7 @@
+extern crate nalgebra as na;
+
+const N: usize = 86;
+const M: usize = 1100000;
 
 // N = 86       Number of tags
 // M = 1.1M     Number of words in English language
@@ -200,16 +204,24 @@ fn parse_word<'a>(input: &'a str) -> TagPair<'a> {
     TagPair{word: new_word, tag: new_tag}
 }
 
-pub struct POSTagger {
-
-
-
+pub struct PoSTagger {
+    pi: na::DVec<f32>,
+    A: na::DMat<f32>,
+    B: na::DMat<f32>,
 }
 
-impl POSTagger {
-    pub fn create_new() {
+impl PoSTagger {
+    pub fn create_new() -> PoSTagger {
         let maxIter: u16 = 10000;
         let mut iters: u16 = 0;
+
+        let mut newTagger = PoSTagger{
+            pi: na::DVec::<f32>::from_elem(N, (1 as f32/N as f32)),
+            A: na::DMat::<f32>::from_elem(N, N, (1 as f32/N as f32)),
+            B: na::DMat::<f32>::from_elem(N, M, (1 as f32/M as f32)),
+        };
+
+        newTagger
     }
 
     pub fn load() {

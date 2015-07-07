@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jarvisrust/nlp.svg)](https://travis-ci.org/jarvisrust/nlp)
+
 # Rust NLP
 
 To use, add this to your `Cargo.toml` file

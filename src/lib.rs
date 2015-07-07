@@ -17,8 +17,6 @@
    along with Jarvis OS.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#![feature(append)]
-
 pub mod tagger;
 pub mod tokenizer;
 

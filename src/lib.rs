@@ -19,6 +19,7 @@
 
 pub mod tagger;
 pub mod tokenizer;
+pub mod ngram;
 
 #[test]
 fn it_works() {

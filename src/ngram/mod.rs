@@ -1,21 +1,34 @@
 
 use tokenizer;
 
+pub type NGram = Vec<String>;
 
-pub type Bigram = Vec<[String; 2]>;
-pub type Trigram = Vec<[String; 3]>;
+pub struct NGramSet {
+    n: usize,
+    set: Vec<NGram>,
+}
 
-pub type Ngram<N> = Vec<[String; N]>;
+impl NGramSet {
 
-fn test () {
-    let a = ["Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string()];
-    let b = ["Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string()];
-    let c = ["Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string()];
-    let d = ["Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string(), "Test".to_string()];
+    pub fn create_empty(size: usize) -> NGramSet {
+        NGramSet{n: size, set: Vec::<NGram>::new()}
+    }
 
-    let vec = Ngram::<5>::new();
-    vec.push(a);
-    vec.push(b);
-    vec.push(c);
-    vec.push(d);
+    pub fn pop(&mut self) -> NGram {
+        self.set.pop().unwrap()
+    }
+    
+    pub fn push(&mut self, item: NGram) -> usize {
+        if item.len() != self.n {
+            return self.n-item.len();
+        }
+
+        self.set.push(item);
+
+        0
+    }
+
+    pub fn get_vec(&self) -> &Vec<NGram> {
+        return &self.set;
+    }
 }

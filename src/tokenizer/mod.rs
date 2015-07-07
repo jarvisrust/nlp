@@ -28,12 +28,12 @@ pub fn tokenize<'a>(input: String) -> TokenList {
 
     out = split_on_spaces(out);
     out = split_on_hyphens(out);
-    out = split_off_punctuation(out);
+    out = split_on_punctuation(out);
 
     out
 }
 
-fn split_on_spaces<'a>(input: TokenList) -> TokenList {
+pub fn split_on_spaces<'a>(input: TokenList) -> TokenList {
     let mut out = TokenList::new();
 
     for token in input {
@@ -46,7 +46,7 @@ fn split_on_spaces<'a>(input: TokenList) -> TokenList {
     out
 }
 
-fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
+pub fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
     let mut out = TokenList::new();
 
     for token in input {
@@ -59,9 +59,7 @@ fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
     out
 }
 
-
-// `!@#$%^&*()-_+={[}]\|:;'”<,>.?/
-fn split_off_punctuation<'a>(input: TokenList) -> TokenList {
+pub fn split_on_punctuation<'a>(input: TokenList) -> TokenList {
     let mut out = TokenList::new();
     let mut current = String::new();
 

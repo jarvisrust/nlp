@@ -28,3 +28,14 @@ Still to add for tokenizer:
 
 1. Tokenizing for things like `n't`
 
+
+Other tokenizing features:
+
+```
+pub type Token = String;
+pub type TokenList = Vec<Token>;
+
+nlp::tokenizer::split_on_spaces(input: TokenList);
+nlp::tokenizer::split_on_hyphen(input: TokenList);
+nlp::tokenizer::split_on_punctuation(input: TokenList);
+```

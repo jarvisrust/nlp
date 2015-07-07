@@ -225,22 +225,22 @@ fn parse_word<'a>(input: &'a str) -> TagPair<'a> {
 
 pub struct PoSTagger {
     pi: na::DVec<f32>,
-    A: na::DMat<f32>,
-    B: na::DMat<f32>,
+    a: na::DMat<f32>,
+    b: na::DMat<f32>,
 }
 
 impl PoSTagger {
     pub fn create_new() -> PoSTagger {
-        let maxIter: u16 = 10000;
-        let mut iters: u16 = 0;
+        let max_iter: u16 = 10000;
+        let iters: u16 = 0;
 
-        let mut newTagger = PoSTagger{
+        let new_tagger = PoSTagger{
             pi: na::DVec::<f32>::from_elem(N, (1 as f32/N as f32)),
-            A: na::DMat::<f32>::from_elem(N, N, (1 as f32/N as f32)),
-            B: na::DMat::<f32>::from_elem(N, M, (1 as f32/M as f32)),
+            a: na::DMat::<f32>::from_elem(N, N, (1 as f32/N as f32)),
+            b: na::DMat::<f32>::from_elem(N, M, (1 as f32/M as f32)),
         };
 
-        newTagger
+        new_tagger
     }
 
     pub fn load() {

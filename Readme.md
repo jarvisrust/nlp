@@ -2,6 +2,8 @@
 
 # Rust NLP
 
+## Usage 
+
 To use, add this to your `Cargo.toml` file
 
 ```
@@ -14,20 +16,16 @@ Then, in your project, simply add
 extern crate nlp;
 ```
 
-Tokenizer is currently the only working library.
+Tokenizer and ngram are currently the only working libraries.
 
-To use it, pass a string to:
+
+## Tokenizer 
+
+To use the Tokenizer, pass a string to:
 ```
 nlp::tokenizer::tokenize(String);
 ```
 and it will return a `Vec<String>` of all the separate tokens
-
-
-
-Still to add for tokenizer:
-
-1. Tokenizing for things like `n't`
-
 
 Other tokenizing features:
 
@@ -39,3 +37,19 @@ nlp::tokenizer::split_on_spaces(input: TokenList);
 nlp::tokenizer::split_on_hyphen(input: TokenList);
 nlp::tokenizer::split_on_punctuation(input: TokenList);
 ```
+
+## NGram
+
+To create ngrams, use:
+```
+nlp::ngram::create_from_string(n, String);
+```
+where n is the number of tokens per ngram and the String is the
+string to turn into ngrams.
+
+## TODO 
+
+Still to add for tokenizer:
+
+1. Tokenizing for things like `n't`
+1. Fix problem with newlines and empty tokens

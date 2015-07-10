@@ -27,8 +27,23 @@ pub fn tokenize<'a>(input: String) -> TokenList {
     out.push(input);
 
     out = split_on_spaces(out);
+    out = split_on_newline(out);
+    out = split_on_char(out, '\r');
     out = split_on_hyphens(out);
     out = split_on_punctuation(out);
+
+    out
+}
+
+pub fn split_on_char<'a>(input: TokenList, target: char) -> TokenList {
+    let mut out = TokenList::new();
+
+    for token in input {
+        let split = token.split(target);
+        for item in split {
+            out.push(item.to_string());
+        }
+    }
 
     out
 }
@@ -45,6 +60,21 @@ pub fn split_on_spaces<'a>(input: TokenList) -> TokenList {
 
     out
 }
+
+pub fn split_on_newline<'a>(input: TokenList) -> TokenList {
+    let mut out = TokenList::new();
+
+    for token in input {
+        let split = token.split("\n");
+        for item in split {
+            out.push(item.to_string());
+        }
+    }
+
+    out
+}
+
+
 
 pub fn split_on_hyphens<'a>(input: TokenList) -> TokenList {
     let mut out = TokenList::new();
@@ -70,8 +100,10 @@ pub fn split_on_punctuation<'a>(input: TokenList) -> TokenList {
         loop {
             match split.next() {
                 None => {
-                    out.push(current.clone());
-                    current.truncate(0);
+                    if current.len() > 0 {
+                        out.push(current.clone());
+                        current.truncate(0);
+                    }
 
                     break;
                 },

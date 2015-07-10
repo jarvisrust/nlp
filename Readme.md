@@ -52,4 +52,3 @@ string to turn into ngrams.
 Still to add for tokenizer:
 
 1. Tokenizing for things like `n't`
-1. Fix problem with newlines and empty tokens

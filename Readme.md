@@ -52,7 +52,7 @@ let ng = nlp::ngram::create_from_string(3, "Any string you want");
 
 ng.add_front_padding();
 ng.add_stop();
-``
+```
 
 ## TODO 
 

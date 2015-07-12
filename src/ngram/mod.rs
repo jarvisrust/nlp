@@ -38,6 +38,21 @@ impl NGramSet {
         result
     }
 
+    pub fn add_front_padding(&mut self) {
+        let mut new_set = Vec::<NGram>::new();
+
+        let mut first = match self.set.first() {
+            Some(item) => item.clone(),
+            None => return,
+        };
+
+        for i in 0..self.n-1 {
+            first.insert(0, "*".to_string());
+            first.pop();
+            self.set.insert(0, first.clone());
+        }
+    }
+
     pub fn add_stop(&mut self) {
         let mut last = match self.set.last() {
             Some(item) => item.clone(),

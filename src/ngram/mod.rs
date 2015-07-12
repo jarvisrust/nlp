@@ -39,14 +39,12 @@ impl NGramSet {
     }
 
     pub fn add_front_padding(&mut self) {
-        let mut new_set = Vec::<NGram>::new();
-
         let mut first = match self.set.first() {
             Some(item) => item.clone(),
             None => return,
         };
 
-        for i in 0..self.n-1 {
+        for _ in 0..self.n {
             first.insert(0, "*".to_string());
             first.pop();
             self.set.insert(0, first.clone());

@@ -19,52 +19,49 @@
 
 extern crate nalgebra as na;
 
-pub mod brown_tags;
-pub mod penn_treebank_tags;
+//pub mod brown_tags;
+//pub mod penn_treebank_tags;
 pub mod tags;
 
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::HashMap;
 
 use ngram;
+use tokenizer;
 
-const N: usize = 86;
-const M: usize = 1100000;
+pub struct PoSTagger {
+    q: tags::TagProbabilityQ,
+    e: tags::TagProbabilityE,
 
-// N = 86       Number of tags
-// M = 1.1M     Number of words in English language
-
-/*
-A function for parsing a word in a tagged
-corpus. These come in the form "word/tag" 
-*/
-
-pub struct PoSTagger<T> {
-    pi: na::DVec<f32>,
-    a: na::DMat<f32>,
-    b: na::DMat<f32>,
-
-    tag_function: fn(&str) -> tags::TagPair<T>,
+    //parse_tag: fn(&str) -> tags::TagPair<T>,
 }
 
-impl <T> PoSTagger<T> {
-    pub fn new(f: fn(&str) -> tags::TagPair<T>) -> PoSTagger<T> {
-        let max_iter: u16 = 10000;
-        let iters: u16 = 0;
+impl PoSTagger {
+    fn parse_tag(input: String) -> tags::TagPair {
+        // Split the input string
+        let mut parts = input.split("/");
 
-        let new_tagger = PoSTagger::<T>{
-            pi: na::DVec::<f32>::from_elem(N, (1 as f32/N as f32)),
-            a: na::DMat::<f32>::from_elem(N, N, (1 as f32/N as f32)),
-            b: na::DMat::<f32>::from_elem(N, M, (1 as f32/M as f32)),
+        // Get the word and tag
+        let new_word = parts.next().unwrap().to_string();
+        let new_tag = parts.next().unwrap().to_string();
 
-            tag_function: f,
+        (new_word, new_tag)
+    }
 
+    pub fn new() -> PoSTagger {
+        let new_tagger = PoSTagger{
+            q: tags::TagProbabilityQ::new(),
+            e: tags::TagProbabilityE::new(),
         };
 
         new_tagger
     }
 
-    pub fn learn_from_corpus(filename: String) {
+    pub fn learn_from_corpus(&mut self, filename: String) {
+        let mut training_e = tags::TagProbabilityE::new();
+        let mut training_q = tags::TagProbabilityQ::new();
+
         let mut f = match File::open(filename) {
             Ok(file) => file,
             Err(_) => return,
@@ -77,6 +74,22 @@ impl <T> PoSTagger<T> {
             Err(_) => return,
         }
 
-        let tags = ngram::NGramSet::create_from_string(3, s);
+        let words = tokenizer::tokenize(s.clone());
+        for word in words {
+            PoSTagger::calculate_probability_e(word, &mut training_e);
+        }
+
+        let tags = ngram::NGramSet::create_from_string(3, s.clone());
+
+
+    }
+
+    fn calculate_probability_e(input: String, e: &mut tags::TagProbabilityE) {
+        let pair = PoSTagger::parse_tag(input);
+
+        let key = tags::generate_key_from_pair(pair);
+
+        let counter = e.entry(key).or_insert(1.0);
+        *counter += 1.0;
     }
 }

@@ -68,34 +68,13 @@ impl PoSTagger {
 
     pub fn learn_from_corpus(&mut self, directory: String) {
         let mut training_e = tags::TagProbabilityE::new();
-        let training_q = tags::TagProbabilityQ::new();
+        let mut training_q = tags::TagProbabilityQ::new();
 
-        let files = match fs::read_dir(directory) {
-            Ok(some) => some,
-            Err(e) => {
-                println!("Error reading directory: {}", e);
-                return;
-            },
-        };
+        for file in PoSTagger::get_files_in_dir(directory) {
 
-        for file in files {
+            println!("Processing File: {:?}", file);
 
-            let filename = match file {
-                Ok(path) => path,
-                Err(e) => {
-                    println!("Error converting filename: {}", e);
-                    return;
-                }
-            };
-
-            if filename.file_name().to_str().unwrap() == ".DS_Store" {
-                println!("Skipping .DS_Store");
-                continue;
-            }
-
-            println!("Processing File: {:?}", filename.path());
-
-            let mut f = match File::open(filename.path()) {
+            let mut f = match File::open(file) {
                 Ok(file) => file,
                 Err(_) => return,
             };
@@ -109,13 +88,15 @@ impl PoSTagger {
 
             let words = tokenizer::tokenize(s.clone());
             for word in words {
-                PoSTagger::calculate_probability_e(word, &mut training_e);
+                PoSTagger::count_occurences_for_e(word, &mut training_e);
             }
 
             let tags = ngram::NGramSet::create_from_string(3, s.clone());
+            for ngram in tags.get_vec() {
+                PoSTagger::count_occurences_for_q(ngram.clone(), &mut training_q);
+            }
         }
 
-        // FOR TESTING
         for (word, hash) in training_e {
             let total = match hash.get("total") {
                 None => continue,
@@ -128,19 +109,58 @@ impl PoSTagger {
                 }
                 let word_hash = self.e.entry(word.clone()).or_insert(HashMap::new());
                 word_hash.insert(tag, amt/total);
-
             }
         }
 
-        for hash in self.e.clone() {
-            println!("{:?}", hash);
+        for (two_tag, hash) in training_q {
+            let total = match hash.get("total") {
+                None => continue,
+                Some(val) => *val,
+            };
+
+            for (tag, amt) in hash {
+                if tag == "total".to_string() {
+                    continue;
+                }
+                let tag_hash = self.q.entry(two_tag.clone()).or_insert(HashMap::new());
+                tag_hash.insert(tag, amt/total);
+            }
         }
     }
 
-    fn calculate_probability_e(input: String, e: &mut tags::TagProbabilityE) {
-        let pair = PoSTagger::parse_tag(input);
+    fn get_files_in_dir(directory: String) -> Vec<String> {
+        let mut result = Vec::<String>::new();
 
-        // let key = tags::generate_key_from_pair(pair);
+        let files = match fs::read_dir(directory) {
+            Ok(some) => some,
+            Err(e) => {
+                println!("Error reading directory: {}", e);
+                return result;
+            },
+        };
+
+        for file in files {
+            let filename = match file {
+                Ok(path) => path,
+                Err(e) => {
+                    println!("Error converting filename: {}", e);
+                    return result;
+                }
+            };
+
+            if filename.file_name().to_str().unwrap() == ".DS_Store" {
+                println!("Skipping .DS_Store");
+                continue;
+            }
+
+            result.push(filename.path().to_str().unwrap().to_string());
+        }
+
+        result
+    }
+
+    fn count_occurences_for_e(input: String, e: &mut tags::TagProbabilityE) {
+        let pair = PoSTagger::parse_tag(input);
 
         match pair {
             (word, tag) => {
@@ -153,5 +173,28 @@ impl PoSTagger {
                 *counter += 1.0;
             },
         }
+    }
+
+    fn count_occurences_for_q(input: ngram::NGram, q: &mut tags::TagProbabilityQ) {
+        let mut tags = Vec::<String>::new();
+        for gram in input {
+            let (_, tag) = PoSTagger::parse_tag(gram);
+            tags.push(tag);
+        }
+
+        let mut key = String::new();
+        let separator = "```".to_string();
+        key.push_str(&tags.get(0).unwrap()[..]);
+        key.push_str(&separator[..]);
+        key.push_str(&tags.get(1).unwrap()[..]);
+
+        let mut tag_hash = q.entry(key.clone()).or_insert(HashMap::new());
+        {
+            let total = tag_hash.entry("total".to_string()).or_insert(0.0);
+            *total += 1.0;
+        }
+
+        let counter = tag_hash.entry(tags.get(2).unwrap().clone()).or_insert(0.0);
+        *counter += 1.0;
     }
 }

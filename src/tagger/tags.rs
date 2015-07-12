@@ -4,7 +4,7 @@ use std::collections::HashMap;
 pub type TagProbabilityQ = HashMap<String, f32>;
 
 // Form of key ("word->tag")
-pub type TagProbabilityE = HashMap<String, f32>;
+pub type TagProbabilityE = HashMap<String, HashMap<String, f32>>;
 
 pub type TagPair = (String, String);
 

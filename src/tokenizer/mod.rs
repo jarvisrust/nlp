@@ -29,8 +29,9 @@ pub fn tokenize<'a>(input: String) -> TokenList {
     out = split_on_spaces(out);
     out = split_on_newline(out);
     out = split_on_char(out, '\r');
-    out = split_on_hyphens(out);
-    out = split_on_punctuation(out);
+    out = split_on_char(out, '\t');
+    // out = split_on_hyphens(out);
+    // out = split_on_punctuation(out);
 
     out
 }
@@ -41,7 +42,9 @@ pub fn split_on_char<'a>(input: TokenList, target: char) -> TokenList {
     for token in input {
         let split = token.split(target);
         for item in split {
-            out.push(item.to_string());
+            if item.len() > 0 {
+                out.push(item.to_string());
+            }
         }
     }
 
@@ -49,16 +52,7 @@ pub fn split_on_char<'a>(input: TokenList, target: char) -> TokenList {
 }
 
 pub fn split_on_spaces<'a>(input: TokenList) -> TokenList {
-    let mut out = TokenList::new();
-
-    for token in input {
-        let split = token.split(" ");
-        for item in split {
-            out.push(item.to_string());
-        }
-    }
-
-    out
+    split_on_char(input, ' ')
 }
 
 pub fn split_on_newline<'a>(input: TokenList) -> TokenList {
@@ -109,10 +103,10 @@ pub fn split_on_punctuation<'a>(input: TokenList) -> TokenList {
                 },
                 Some(x) => {
                     let c: u8 = x as u8;
-                    if  (c > 32  && c < 48) ||
+                    if  (c > 32  && c < 47) ||
                         (c > 57  && c < 65) ||
                         (c > 90  && c < 97) ||
-                        (c > 122 && c < 127) {
+                        (c > 122 && c < 126) {
 
                         out.extend(&mut take_symbol(x.to_string(), &mut current).into_iter());
                     } else {

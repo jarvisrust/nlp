@@ -54,6 +54,16 @@ ng.add_front_padding();
 ng.add_stop();
 ```
 
+## Tagger
+
+Now generates e probability when:
+```
+let mut tagger = nlp::tagger::PoSTagger::new();
+tagger.learn_from_corpus("/Path/To/Folder/Containing/Corpus/Files".to_string());
+```
+
+Unfortunately, you can't do anything with it yet
+
 ## TODO 
 
 Still to add for tokenizer:

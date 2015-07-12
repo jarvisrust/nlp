@@ -1,0 +1,91 @@
+use tagger::tags;
+
+pub fn parse_tag<'a>(input: &'a str) -> tags::TagPair<'a, PennTreebankTag> {
+    // Split the input string
+    let mut parts = input.split("/");
+
+    // Get the word
+    let new_word = parts.next().unwrap();
+
+    let new_tag = match parts.next().unwrap() {
+        "CC" => PennTreebankTag::CoordinatingConjunction,
+        "CD" => PennTreebankTag::CardinalNumber,
+        "DT" => PennTreebankTag::Determiner,
+        "EX" => PennTreebankTag::ExistentialThere,
+        "FW" => PennTreebankTag::ForeignWord,
+        "IN" => PennTreebankTag::PrepositionOrSubordinatingConjunction,
+        "JJ" => PennTreebankTag::Adjective,
+        "JJR" => PennTreebankTag::AdjectiveComparative,
+        "JJS" => PennTreebankTag::AdjectiveSuperlative,
+        "LS" => PennTreebankTag::ListItemMarker,
+        "MD" => PennTreebankTag::Modal,
+        "NN" => PennTreebankTag::NounSingularOrMass,
+        "NNS" => PennTreebankTag::NounPlural,
+        "NNP" => PennTreebankTag::ProperNounSingular,
+        "NNPS" => PennTreebankTag::ProperNounPlural,
+        "PDT" => PennTreebankTag::Predeterminer,
+        "POS" => PennTreebankTag::PossessiveEnding,
+        "PRP" => PennTreebankTag::PersonalPronoun,
+        "PRP$" => PennTreebankTag::PossessivePronoun,
+        "RB" => PennTreebankTag::Adverb,
+        "RBR" => PennTreebankTag::AdverbComparative,
+        "RBS" => PennTreebankTag::AdverbSuperlative,
+        "RP" => PennTreebankTag::Particle,
+        "SYM" => PennTreebankTag::Symbol,
+        "TO" => PennTreebankTag::To,
+        "UH" => PennTreebankTag::Interjection,
+        "VB" => PennTreebankTag::VerbBaseForm,
+        "VBD" => PennTreebankTag::VerbPastTense,
+        "VBG" => PennTreebankTag::VerbGerundOrPresentParticiple,
+        "VBN" => PennTreebankTag::VerbPastParticiple,
+        "VBP" => PennTreebankTag::VerbNonThirdPersonSingularPresent,
+        "VBZ" => PennTreebankTag::VerbThirdPersonSingularPresent,
+        "WDT" => PennTreebankTag::WhDeterminer,
+        "WP" => PennTreebankTag::WhPronoun,
+        "WP$" => PennTreebankTag::PossessiveWhPronoun,
+        "WRB" => PennTreebankTag::WhAdverb,
+        _ => PennTreebankTag::None,
+    };
+
+    tags::<PennTreebankTag>::TagPair{word: new_word, tag: new_tag}
+}
+
+pub enum PennTreebankTag {
+    CoordinatingConjunction,
+    CardinalNumber,
+    Determiner,
+    ExistentialThere,
+    ForeignWord,
+    PrepositionOrSubordinatingConjunction,
+    Adjective,
+    AdjectiveComparative,
+    AdjectiveSuperlative,
+    ListItemMarker,
+    Modal,
+    NounSingularOrMass,
+    NounPlural,
+    ProperNounSingular,
+    ProperNounPlural,
+    Predeterminer,
+    PossessiveEnding,
+    PersonalPronoun,
+    PossessivePronoun,
+    Adverb,
+    AdverbComparative,
+    AdverbSuperlative,
+    Particle,
+    Symbol,
+    To,
+    Interjection,
+    VerbBaseForm,
+    VerbPastTense,
+    VerbGerundOrPresentParticiple,
+    VerbPastParticiple,
+    VerbNonThirdPersonSingularPresent,
+    VerbThirdPersonSingularPresent,
+    WhDeterminer,
+    WhPronoun,
+    PossessiveWhPronoun,
+    WhAdverb,
+    None,
+}

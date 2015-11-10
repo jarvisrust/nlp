@@ -39,24 +39,6 @@ pub struct PoSTagger {
 }
 
 impl PoSTagger {
-    fn parse_tag(input: String) -> tags::TagPair {
-
-        // Split the input string
-        let mut parts = input.split("/");
-
-        let size: usize = parts.clone().count();
-
-        if size < 2 {
-            return (parts.next().unwrap().to_string(), "".to_string());
-        }
-
-        // Get the word and tag
-        let new_word = parts.next().unwrap().to_string();
-        let new_tag = parts.next().unwrap().to_string();
-
-        (new_word, new_tag)
-    }
-
     pub fn new() -> PoSTagger {
         let new_tagger = PoSTagger{
             q: tags::TagProbabilityQ::new(),
@@ -64,6 +46,18 @@ impl PoSTagger {
         };
 
         new_tagger
+    }
+
+    pub fn tag_string(&self, target: String) {
+        let trigrams = ngram::create_from_string(3, target);
+        trigrams.add_front_padding();
+        trigrams.add_stop();
+
+        for trigram in trigrams {
+            let first = trigram.get(0).unwrap();
+            let second = trigram.get(1).unwrap();
+            let third = trigram.get(2).unwrap();
+        }
     }
 
     pub fn learn_from_corpus(&mut self, directory: String) {
@@ -196,5 +190,23 @@ impl PoSTagger {
 
         let counter = tag_hash.entry(tags.get(2).unwrap().clone()).or_insert(0.0);
         *counter += 1.0;
+    }
+
+    fn parse_tag(input: String) -> tags::TagPair {
+
+        // Split the input string
+        let mut parts = input.split("/");
+
+        let size: usize = parts.clone().count();
+
+        if size < 2 {
+            return (parts.next().unwrap().to_string(), "".to_string());
+        }
+
+        // Get the word and tag
+        let new_word = parts.next().unwrap().to_string();
+        let new_tag = parts.next().unwrap().to_string();
+
+        (new_word, new_tag)
     }
 }
